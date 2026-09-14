@@ -1,0 +1,22 @@
+{
+  "buildCommand": "vite build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api/chat",
+      "destination": "/api/chat"
+    },
+    {
+      "source": "/api/health",
+      "destination": "/api/health"
+    },
+    {
+      "source": "/api/system-instructions",
+      "destination": "/api/system-instructions"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
