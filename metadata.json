@@ -1,0 +1,7 @@
+{
+  "name": "Peer Career Advisor",
+  "description": "AI peer mentor and career advisor for graduate students seeking internships, outreach emails, and professional guidance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
