@@ -162,13 +162,13 @@ app.get("/api/system-instructions", (req, res) => {
 });
 
 // Candidate models to try in order during temporary high-demand (503) or rate limits (429)
-// gemini-2.5-flash and gemini-3.1-flash-lite are fast and highly available;
-// gemini-flash-latest and gemini-3.8-flash serve as additional candidates.
+// gemini-3.1-flash-lite and gemini-flash-latest are fast and highly available;
+// gemini-3.8-flash and gemini-3.1-pro-preview serve as robust alternatives.
 const CANDIDATE_MODELS = [
-  "gemini-2.5-flash",
   "gemini-3.1-flash-lite",
   "gemini-flash-latest",
   "gemini-3.8-flash",
+  "gemini-3.1-pro-preview",
 ];
 
 function formatGeminiError(error: any): string {

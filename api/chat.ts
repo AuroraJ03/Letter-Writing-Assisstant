@@ -90,10 +90,10 @@ Knowledge Base (Dark Mode):
 - https://www.indeed.com/career-advice/career-development/formal-letter-of-resignation`;
 
 const CANDIDATE_MODELS = [
-  "gemini-2.5-flash",
   "gemini-3.1-flash-lite",
   "gemini-flash-latest",
   "gemini-3.8-flash",
+  "gemini-3.1-pro-preview",
 ];
 
 async function readRequestBody(req: IncomingMessage): Promise<any> {

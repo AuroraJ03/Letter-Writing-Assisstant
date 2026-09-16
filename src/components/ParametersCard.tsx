@@ -149,6 +149,40 @@ export const INITIAL_DARK_QUICK_ACTION_TAGS: QuickActionTag[] = [
 
 export const INITIAL_QUICK_ACTION_TAGS: QuickActionTag[] = INITIAL_LIGHT_QUICK_ACTION_TAGS;
 
+export interface DarkToneStep {
+  value: string;
+  label: string;
+  shortDesc: string;
+  badge: string;
+}
+
+export const DARK_TONE_STEPS: DarkToneStep[] = [
+  {
+    value: 'Professional: Grateful, diplomatic, and objective',
+    label: 'Professional',
+    shortDesc: 'Diplomatic, grateful & respectful',
+    badge: 'Polished',
+  },
+  {
+    value: 'Balanced: Direct, concise, and business-focused',
+    label: 'Balanced',
+    shortDesc: 'Matter-of-fact & objective transition',
+    badge: 'Direct',
+  },
+  {
+    value: 'Passive-aggressive: Coldly polite, subtle sarcasm, unvarnished corporate reality',
+    label: 'Cold & Sarcastic',
+    shortDesc: 'Pointed remarks & subtle corporate irony',
+    badge: 'Spicy',
+  },
+  {
+    value: 'I am mad at the company: Casual, sarcastic, candid & completely done with the toxic BS',
+    label: 'I am mad at the company',
+    shortDesc: 'Unfiltered, sarcastic & unapologetic',
+    badge: 'Zero Filter',
+  },
+];
+
 interface ParametersCardProps {
   context: OutreachContext;
   quickActionTags: QuickActionTag[];
@@ -204,6 +238,20 @@ export const ParametersCard: React.FC<ParametersCardProps> = ({
     tone,
     formAndLength,
   };
+
+  // Determine dark mode tone stepper active index
+  const resolvedDarkStepIndex = DARK_TONE_STEPS.findIndex((s) => s.value === tone);
+  const darkToneStepIndex = resolvedDarkStepIndex >= 0
+    ? resolvedDarkStepIndex
+    : tone.toLowerCase().includes('mad') || tone.toLowerCase().includes('sarcastic') || tone.toLowerCase().includes('toxic')
+    ? 3
+    : tone.toLowerCase().includes('passive') || tone.toLowerCase().includes('cold')
+    ? 2
+    : tone.toLowerCase().includes('direct') || tone.toLowerCase().includes('concise')
+    ? 1
+    : 0;
+
+  const currentDarkStep = DARK_TONE_STEPS[darkToneStepIndex] || DARK_TONE_STEPS[0];
 
   // 5. 只要user在parameter里有任何input，expand的文字变成Edit，功能不变。
   const hasAnyInput = Boolean(
@@ -389,67 +437,185 @@ export const ParametersCard: React.FC<ParametersCardProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <div>
-              <label className={`block text-[11px] font-bold uppercase tracking-wider mb-1.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                {isDark ? '4. Tone (Professional & Constructive)' : '4. Tone (Non-deferential)'}
-              </label>
-              <select
-                value={tone}
-                onChange={(e) => setTone(e.target.value)}
-                className={`w-full px-3 py-2 rounded-xl glass-input text-xs outline-none transition-all shadow-inner ${
-                  isDark ? 'text-slate-100 bg-slate-800' : 'text-slate-900'
-                }`}
-              >
-                <option value="">-- Select tone --</option>
-                {isDark ? (
-                  <>
-                    <option value="Grateful, objective, and constructive">Grateful, objective, and constructive</option>
-                    <option value="Direct, concise, and business-focused">Direct, concise, and business-focused</option>
-                    <option value="Executive, diplomatic, and forward-looking">Executive, diplomatic, and forward-looking</option>
-                    <option value="Warm, appreciative, and peer-level">Warm, appreciative, and peer-level</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="Confident & professional peer-level (no excessive deference)">
-                      Confident & Peer-Level (No excessive deference)
-                    </option>
-                    <option value="Direct, crisp, and time-respectful">Direct & Time-Respectful</option>
-                    <option value="Warm, conversational yet polished">Warm & Conversational</option>
-                  </>
-                )}
-              </select>
-            </div>
+          {/* 4. Tone - Full Width Row */}
+          <div className="w-full">
+            {isDark ? (
+              <div className="p-4 rounded-2xl border bg-slate-800/70 border-slate-700/80 shadow-inner">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-300">
+                      4. Tone Stepper
+                    </label>
+                    <span className="text-[10px] text-slate-400">
+                      (Drag slider or click steps to control tone)
+                    </span>
+                  </div>
+                  <span
+                    className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border transition-all ${
+                      darkToneStepIndex === 3
+                        ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse'
+                        : darkToneStepIndex === 2
+                        ? 'bg-orange-500/20 text-orange-300 border-orange-500/40'
+                        : darkToneStepIndex === 1
+                        ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                        : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                    }`}
+                  >
+                    {currentDarkStep.badge}
+                  </span>
+                </div>
 
-            <div>
-              <label className={`block text-[11px] font-bold uppercase tracking-wider mb-1.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                5. Form & Length
-              </label>
-              <select
-                value={formAndLength}
-                onChange={(e) => setFormAndLength(e.target.value)}
-                className={`w-full px-3 py-2 rounded-xl glass-input text-xs outline-none transition-all shadow-inner ${
-                  isDark ? 'text-slate-100 bg-slate-800' : 'text-slate-900'
-                }`}
-              >
-                <option value="">-- Select form & length --</option>
-                {isDark ? (
-                  <>
-                    <option value="Formal Letter">Formal Letter (Standard 1-page)</option>
-                    <option value="Email (standard)">Email (Standard ~150-200 words)</option>
-                    <option value="Email (short)">Email (Short & direct ~80-100 words)</option>
-                    <option value="social media message">Internal message / Slack farewell</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="Email (short)">Email (short)</option>
-                    <option value="Email (standard)">Email (standard)</option>
-                    <option value="Linkedin Notes">Linkedin Notes</option>
-                    <option value="social media message">social media message</option>
-                  </>
-                )}
-              </select>
-            </div>
+                {/* Stepper with perfectly aligned track, nodes, drag handle and text labels */}
+                <div className="relative pt-2 pb-1">
+                  {/* Background Track Line */}
+                  <div className="absolute top-[17px] left-[10px] right-[10px] h-2 bg-slate-700/90 rounded-full pointer-events-none" />
+
+                  {/* Active Highlighted Fill Line */}
+                  <div
+                    className={`absolute top-[17px] left-[10px] h-2 rounded-full pointer-events-none transition-all duration-150 ${
+                      darkToneStepIndex === 3
+                        ? 'bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500'
+                        : darkToneStepIndex === 2
+                        ? 'bg-gradient-to-r from-emerald-500 to-orange-500'
+                        : darkToneStepIndex === 1
+                        ? 'bg-gradient-to-r from-emerald-500 to-amber-500'
+                        : 'bg-emerald-500'
+                    }`}
+                    style={{
+                      width: `calc(${((darkToneStepIndex) / (DARK_TONE_STEPS.length - 1)) * 100}% - ${((darkToneStepIndex) / (DARK_TONE_STEPS.length - 1)) * 20}px + 10px)`,
+                    }}
+                  />
+
+                  {/* Native Range Slider Layer (transparent, placed over track for smooth dragging) */}
+                  <input
+                    type="range"
+                    min={0}
+                    max={DARK_TONE_STEPS.length - 1}
+                    step={1}
+                    value={darkToneStepIndex}
+                    onChange={(e) => {
+                      const idx = Number(e.target.value);
+                      setTone(DARK_TONE_STEPS[idx].value);
+                    }}
+                    className="absolute top-0 left-0 w-full h-9 opacity-0 cursor-pointer z-20"
+                    aria-label="Tone Stepper"
+                  />
+
+                  {/* Stepper Interactive Nodes & Corresponding Text Column */}
+                  <div className="relative z-10 grid grid-cols-4 w-full">
+                    {DARK_TONE_STEPS.map((step, idx) => {
+                      const isSelected = idx === darkToneStepIndex;
+                      const isPastOrCurrent = idx <= darkToneStepIndex;
+
+                      return (
+                        <button
+                          key={step.label}
+                          type="button"
+                          onClick={() => setTone(step.value)}
+                          className="flex flex-col items-center group cursor-pointer text-center px-1"
+                        >
+                          {/* Circle Dot Marker (Centered Exactly at Top 18px matching track) */}
+                          <div className="h-6 flex items-center justify-center">
+                            <div
+                              className={`rounded-full border-2 transition-all duration-200 ${
+                                isSelected
+                                  ? idx === 3
+                                    ? 'w-5 h-5 bg-rose-500 border-white shadow-lg shadow-rose-500/60 scale-110'
+                                    : idx === 2
+                                    ? 'w-5 h-5 bg-orange-500 border-white shadow-lg shadow-orange-500/60 scale-110'
+                                    : idx === 1
+                                    ? 'w-5 h-5 bg-amber-500 border-white shadow-lg shadow-amber-500/60 scale-110'
+                                    : 'w-5 h-5 bg-emerald-500 border-white shadow-lg shadow-emerald-500/60 scale-110'
+                                  : isPastOrCurrent
+                                  ? 'w-3.5 h-3.5 bg-slate-400 border-slate-300'
+                                  : 'w-3.5 h-3.5 bg-slate-700 border-slate-500 group-hover:border-slate-300'
+                              }`}
+                            />
+                          </div>
+
+                          {/* Label Directly Aligned Below The Node */}
+                          <span
+                            className={`text-[11px] mt-1.5 leading-snug transition-colors ${
+                              isSelected
+                                ? idx === 3
+                                  ? 'text-rose-400 font-bold'
+                                  : idx === 2
+                                  ? 'text-orange-400 font-bold'
+                                  : idx === 1
+                                  ? 'text-amber-300 font-bold'
+                                  : 'text-emerald-400 font-bold'
+                                : 'text-slate-400 group-hover:text-slate-200 font-medium'
+                            }`}
+                          >
+                            {step.label}
+                          </span>
+
+                          {/* Short Sub-description */}
+                          <span
+                            className={`text-[9.5px] mt-0.5 leading-tight transition-colors hidden sm:block ${
+                              isSelected
+                                ? 'text-slate-300 font-normal'
+                                : 'text-slate-500 group-hover:text-slate-400'
+                            }`}
+                          >
+                            {step.shortDesc}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5 text-slate-600">
+                  4. Tone (Non-deferential)
+                </label>
+                <select
+                  value={tone}
+                  onChange={(e) => setTone(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl glass-input text-xs outline-none transition-all shadow-inner text-slate-900"
+                >
+                  <option value="">-- Select tone --</option>
+                  <option value="Confident & professional peer-level (no excessive deference)">
+                    Confident & Peer-Level (No excessive deference)
+                  </option>
+                  <option value="Direct, crisp, and time-respectful">Direct & Time-Respectful</option>
+                  <option value="Warm, conversational yet polished">Warm & Conversational</option>
+                </select>
+              </div>
+            )}
+          </div>
+
+          {/* 5. Form & Length - Full Width Row */}
+          <div className="w-full">
+            <label className={`block text-[11px] font-bold uppercase tracking-wider mb-1.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              5. Form & Length
+            </label>
+            <select
+              value={formAndLength}
+              onChange={(e) => setFormAndLength(e.target.value)}
+              className={`w-full px-3 py-2 rounded-xl glass-input text-xs outline-none transition-all shadow-inner ${
+                isDark ? 'text-slate-100 bg-slate-800' : 'text-slate-900'
+              }`}
+            >
+              <option value="">-- Select form & length --</option>
+              {isDark ? (
+                <>
+                  <option value="Formal Letter">Formal Letter (Standard 1-page)</option>
+                  <option value="Email (standard)">Email (Standard ~150-200 words)</option>
+                  <option value="Email (short)">Email (Short & direct ~80-100 words)</option>
+                  <option value="social media message">Internal message / Slack farewell</option>
+                </>
+              ) : (
+                <>
+                  <option value="Email (short)">Email (short)</option>
+                  <option value="Email (standard)">Email (standard)</option>
+                  <option value="Linkedin Notes">Linkedin Notes</option>
+                  <option value="social media message">social media message</option>
+                </>
+              )}
+            </select>
           </div>
 
           {/* Quick Draft, Save, and Skip Buttons */}
