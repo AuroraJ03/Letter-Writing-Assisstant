@@ -36,7 +36,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, themeMode = '
 
   const handleAffirmative = () => {
     if (onSendFeedback) {
-      onSendFeedback("Yes, this draft looks great and meets my goals! What are your suggested next steps and tips for future reference?");
+      onSendFeedback("Yes, this looks great and meets my goals! Please share your suggested next steps and tips for future reference without rewriting it.");
     }
   };
 

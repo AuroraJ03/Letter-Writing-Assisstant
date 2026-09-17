@@ -176,7 +176,22 @@ export default function App() {
     }
 
     // 切换到的目标 mode 里面应该是空的
+    // Cancel any response from the previous mode so it cannot repopulate the cleared UI.
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+
+    // Start the target mode with a completely fresh conversation.
+    setMessages([]);
     setOutcomeDraft(null);
+    setContext({ ...EMPTY_CONTEXT });
+    setInputText('');
+    setErrorMsg(null);
+    setLastPrompt('');
+    setIsStreaming(false);
+    setHideQuickActions(false);
+    setParametersResetKey((key) => key + 1);
 
     const nextMode = themeMode === 'light' ? 'dark' : 'light';
     setThemeMode(nextMode);
@@ -639,7 +654,7 @@ Remember to wrap the draft in <<<DRAFT>>>...<<<END_DRAFT>>> tags and display it 
 
   // Accept draft
   const handleAcceptDraft = () => {
-    handleSendMessage("Yes, this draft looks great and meets my goals! What are your suggested next steps and tips for future reference?");
+    handleSendMessage("Yes, this looks great and meets my goals! Please share your suggested next steps and tips for future reference without rewriting it.");
   };
 
   // 3. Save draft note handler
